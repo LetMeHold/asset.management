@@ -16,15 +16,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.bus = Business()
 
     def closeEvent(self, event):
+        self.disconnect()
         GL.LOG.info('asset.management exit')
 
     def connect(self):
-        self.bus.connect()
+        try:
+            self.bus.connect(db='asset.management')
+            GL.LOG.info('数据库连接已建立')
+        except:
+            GL.LOG.error('建立数据库连接失败\n' + traceback.format_exc())
 
     def disconnect(self):
-        self.bus.disconnect()
+        try:
+            self.bus.disconnect()
+            GL.LOG.info('数据库连接已断开')
+        except: 
+            GL.LOG.error('断开数据库连接失败\n' + traceback.format_exc())
+
+    def test(self):
+        try:
+            result = []
+            self.bus.test(result)
+            for r in result:
+                GL.LOG.info(r)
+        except: 
+            GL.LOG.error('执行数据库操作失败\n' + traceback.format_exc())
 
     def relate(self):
         self.btnConn.clicked.connect(self.connect)
         self.btnDisconn.clicked.connect(self.disconnect)
+        self.btnTest.clicked.connect(self.test)
 
