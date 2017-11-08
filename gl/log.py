@@ -17,7 +17,8 @@ def getLogger(loggerName, logfile):
 
     # 输出日志到文件,文件最大1M，最多保存两个
     fh = logging.handlers.RotatingFileHandler(logfile, maxBytes=1*1024*1024, backupCount=2, encoding="utf8")
-    ffmt = logging.Formatter('%(asctime)s - %(name)s - %(threadName)s - %(levelname)s - %(message)s')
+    #ffmt = logging.Formatter('%(asctime)s - %(name)s - %(threadName)s - %(levelname)s - %(message)s')
+    ffmt = logging.Formatter('%(message)s')
     fh.setFormatter(ffmt)
     fh.setLevel(logging.DEBUG)   # 设置级别如果低于LOG设置的级别则无效
     LOG.addHandler(fh)  # 如果不需要记录到文件，注释这行即可

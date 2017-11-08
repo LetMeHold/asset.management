@@ -7,6 +7,5 @@ class Global:
 
     def __init__(self):
         self.LOG = None
-        self.DB = None
 
 GL = Global()

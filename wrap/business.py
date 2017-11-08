@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from gl import *
-from wrap.base import DB
+from wrap.base import *
 from openpyxl import Workbook
 from openpyxl import load_workbook
 
@@ -9,11 +9,30 @@ class Business:
 
     def __init__(self):
         self.db = DB(db='asset.management')
+        self.tol = Tools()
 
     def __del__(self):
         if self.db != None:
             del self.db
             self.db = None
+
+    def getRedPrice(self, vc, typ, spec):
+        sql = self.tol.queryRedPriceSql(vc, typ, spec)
+        result = []
+        self.db.query(result, sql)
+        return result
+
+    def getClassDiscount(self, classify):
+        sql = self.tol.queryClassDiscountSql(classify)
+        result = []
+        self.db.query(result, sql)
+        return result
+
+    def getStandardParamSql(self, standard):
+        sql = self.tol.queryStandardParamSql(standard)
+        result = []
+        self.db.query(result, sql)
+        return result
 
     def loadRedPriceExcel(self, sheet):
         wb = load_workbook(filename='../../db/zjh/河南虹峰电缆股份有限公司-电子红本新本2016.11.17.xlsx')
