@@ -5,18 +5,6 @@ import pymysql.cursors
 
 class Tools:
 
-    def getVCName(self, vcNum):
-        if vcNum==1 or vcNum==10:
-            return ('架空绝缘电缆',)
-        elif vcNum == 0.6:
-            return ('低压电力电缆',)
-        elif vcNum < 0.6:
-            return ('电线','控制电缆','计算机电缆')
-        elif vcNum > 0.6:
-            return ('中压电力电缆',)
-        else:
-            return None
-
     def queryVcZhSql(self, vc):
         return 'select vc,vczh,unit from vcmap where vc="%s"' % vc
 
@@ -28,11 +16,8 @@ class Tools:
             return 'select vc,name,price from redprice where vc="%s" and type="%s" and spec="%s"'\
                 % (vc,typ,spec)
 
-    def queryClassDiscountSql(self, classify):
-        return 'select discount from classify where name ="%s"' % classify
-
-    def queryStandardParamSql(self, standard):
-        return 'select param from standard where name ="%s"' % standard
+    def queryClassDiscountSql(self, classify, sn):
+        return 'select discount from classify where class="%s" and sn<=%d' % (classify,sn)
 
 class DB:
 

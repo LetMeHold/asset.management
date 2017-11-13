@@ -41,17 +41,21 @@ class Business:
                     ret = m['price']
         return ret
 
-    def getClassDiscount(self, classify):
-        sql = self.tol.queryClassDiscountSql(classify)
-        result = []
-        self.db.query(result, sql)
-        return result
+    def getClassDiscount(self, classify, sn):
+        sql = self.tol.queryClassDiscountSql(classify, sn)
+        result = self.db.query(sql)
+        retLst = []
+        for m in result:
+            retLst.append(m['discount'])
+        return retLst
 
-    def getStandardParamSql(self, standard):
-        sql = self.tol.queryStandardParamSql(standard)
-        result = []
-        self.db.query(result, sql)
-        return result
+    def getValueRedPrice(self, rp, discount, amount):
+        ret = rp
+        for n in discount:
+            ret *= n
+        ret *= amount
+        return ret
+        
 
     def loadClassifyExcel(self):
         wb = load_workbook(filename='../../db/zjh/分类下浮标准对照表.xlsx')
