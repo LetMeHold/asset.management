@@ -10,7 +10,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
-        GL.LOG = getLogger('AssetLoger', 'logs/console.log')
+        GL.LOG = getLogger('AssetLoger', 'logs', 'console.log')
         GL.LOG.info('asset.management start')
         self.relate()
         self.bus = None

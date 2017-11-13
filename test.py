@@ -4,7 +4,7 @@ from gl import *
 from ui import *
 from wrap import *
 
-GL.LOG = getLogger('AssetLoger', 'logs/console.log')
+GL.LOG = getLogger('AssetLoger', 'logs', 'console.log')
 bus = Business()
 
 def outValue(vc, typ, spec, classify, standard, amount):
@@ -23,23 +23,22 @@ def outValue(vc, typ, spec, classify, standard, amount):
         value *= discount
     return value
 
-vc = 0.5
-tpy = 'BV'
-spec = '0.75'
-classify = '铝'
-standard = '标3'
-amount = 2
+def outValTest():
+    vc = 0.5
+    tpy = 'BV'
+    spec = '0.75'
+    classify = '铝'
+    standard = '标3'
+    amount = 2
 
-GL.LOG.info('输入: 电压(%f) 型号(%s) 规格(%s) 分类(%s) 标准(%s) 数量(%d)' % \
-            (vc,tpy,spec,classify,standard,amount))
-val = outValue(vc, tpy, spec, classify, standard, amount)
-GL.LOG.info('计算出产值红本价: %f' % val)
+    GL.LOG.info('输入: 电压(%f) 型号(%s) 规格(%s) 分类(%s) 标准(%s) 数量(%d)' % \
+                (vc,tpy,spec,classify,standard,amount))
+    val = outValue(vc, tpy, spec, classify, standard, amount)
+    GL.LOG.info('计算出产值红本价: %f' % val)
 
-#bus.loadRedPriceExcel('电线')
-#bus.loadRedPriceExcel('低压电力电缆')
-#bus.loadRedPriceExcel('中压电力电缆')
-#bus.loadRedPriceExcel('控制电缆')
-#bus.loadRedPriceExcel('架空绝缘电缆')
-#bus.loadRedPriceExcel('计算机电缆')
+def loadRedPrice():
+    bus.loadRedPriceExcel()
+
+
 del bus
 

@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
 
+import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-def getLogger(loggerName, logfile):
+def getLogger(loggerName, logdir, logfile):
     LOG = logging.getLogger(loggerName)
     LOG.setLevel(logging.DEBUG) # 这个级别是基础
 
@@ -16,7 +17,9 @@ def getLogger(loggerName, logfile):
     #LOG.addHandler(ch)  # 如果不需要打印到控制台，注释这行即可
 
     # 输出日志到文件,文件最大1M，最多保存两个
-    fh = logging.handlers.RotatingFileHandler(logfile, maxBytes=1*1024*1024, backupCount=2, encoding="utf8")
+    if not os.path.isdir(logdir):
+        os.mkdir(logdir)
+    fh = logging.handlers.RotatingFileHandler('%s/%s' % (logdir,logfile), maxBytes=1*1024*1024, backupCount=2, encoding="utf8")
     #ffmt = logging.Formatter('%(asctime)s - %(name)s - %(threadName)s - %(levelname)s - %(message)s')
     ffmt = logging.Formatter('%(message)s')
     fh.setFormatter(ffmt)
