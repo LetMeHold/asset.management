@@ -7,6 +7,18 @@ from wrap import *
 GL.LOG = getLogger('AssetLoger', 'logs', 'console.log')
 bus = Business()
 
+vc = '0.6/1'
+typ = 'VV'
+spec = '1*1.5'
+#vc = '8.7/10'
+#typ = 'YJV22'
+#spec = '3*300'
+classify = '铝'
+standard = '标3'
+amount = 2
+ret = bus.getRedPrice(vc, typ, spec)
+GL.LOG.info(ret)
+
 def outValue(vc, typ, spec, classify, standard, amount):
     ret = bus.getRedPrice(vc, typ, spec)
     #单价
@@ -38,6 +50,13 @@ def outValTest():
 
 def loadRedPrice():
     bus.loadRedPriceExcel()
+
+def loadVcMap():
+    bus.loadVcMapExcel()
+
+def loadClassify():
+    bus.loadClassifyExcel()
+
 
 
 del bus

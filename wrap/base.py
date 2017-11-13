@@ -17,12 +17,16 @@ class Tools:
         else:
             return None
 
-    def queryRedPriceSql(self, vcNum, typ, spec):
-        vcName = self.getVCName(vcNum)
-        if vcName == None:
-            return None
-        return 'select price from redprice where vc in %s and type="%s" and spec="%s"'\
-                % (str(vcName),typ,spec)
+    def queryVcZhSql(self, vc):
+        return 'select vc,vczh,unit from vcmap where vc="%s"' % vc
+
+    def queryRedPriceSql(self, vc, typ, spec):
+        if isinstance(vc, tuple):
+            return 'select vc,name,price from redprice where vc in %s and type="%s" and spec="%s"'\
+                % (str(vc),typ,spec)
+        else:
+            return 'select vc,name,price from redprice where vc="%s" and type="%s" and spec="%s"'\
+                % (vc,typ,spec)
 
     def queryClassDiscountSql(self, classify):
         return 'select discount from classify where name ="%s"' % classify
@@ -61,12 +65,14 @@ class DB:
             self.count_failed += 1
             GL.LOG.error('在数据库(%s)执行语句(%s)失败\n%s' % (self.name,sql,traceback.format_exc()))
 
-    def query(self, result, sql):
+    def query(self, sql):
+        result = []
         try:
             with self.conn.cursor() as cur:
                 cur.execute(sql)
                 result.extend(cur.fetchall())
                 self.count_success += 1
+                return result
         except:
             self.count_failed += 1
             GL.LOG.error('在数据库(%s)执行语句(%s)失败\n%s' % (self.name,sql,traceback.format_exc()))
