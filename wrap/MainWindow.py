@@ -13,6 +13,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         GL.LOG = getLogger('AssetLoger', 'logs', 'console.log')
         GL.LOG.info('asset.management start')
         self.relate()
+        self.initdata()
         self.bus = None
 
     def closeEvent(self, event):
@@ -29,6 +30,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             del self.bus
             self.bus = None
 
+    def outRedPrice(self):
+        vc = self.edtVc.text()
+        typ = self.edtTyp.text()
+        spec = self.edtSpec.text()
+        clas = self.cmbClass.currentText()
+        sn = int(self.cmbSn.currentText())
+        amount = self.sbAmount.value()
+        tmp = '%s %s %s %s %d %d' % (vc,typ,spec,clas,sn,amount)
+        #GL.LOG.info(tmp)
+        self.edtResult.setText(tmp)
+
     def test(self):
         pass
 
@@ -36,4 +48,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btnConn.clicked.connect(self.connect)
         self.btnDisconn.clicked.connect(self.disconnect)
         self.btnTest.clicked.connect(self.test)
+        self.btnCount.clicked.connect(self.outRedPrice)
+
+    def initdata(self):
+        self.edtVc.setText('0.6/1')
+        self.edtTyp.setText('VV')
+        self.edtSpec.setText('1*1.5')
+        self.cmbClass.addItem('铜')
+        self.cmbClass.addItem('铝')
+        self.cmbClass.selectIndex = 0
+        self.cmbSn.addItem('1')
+        self.cmbSn.addItem('2')
+        self.cmbSn.addItem('3')
+        self.cmbSn.addItem('4')
+        self.cmbSn.selectIndex = 0
+        self.sbAmount.setRange(1,65535)
 
