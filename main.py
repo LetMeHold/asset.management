@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#pyuic5.bat -o ui/ui_main.py ui/main.ui
 
 from gl import *
 from ui import *

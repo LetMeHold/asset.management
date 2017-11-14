@@ -31,15 +31,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.bus = None
 
     def outRedPrice(self):
+        if self.bus == None:
+            return
         vc = self.edtVc.text()
         typ = self.edtTyp.text()
         spec = self.edtSpec.text()
         clas = self.cmbClass.currentText()
         sn = int(self.cmbSn.currentText())
         amount = self.sbAmount.value()
-        tmp = '%s %s %s %s %d %d' % (vc,typ,spec,clas,sn,amount)
+        rp = self.bus.getRedPrice(vc, typ, spec)
+        dis = self.bus.getClassDiscount(clas, sn)
+        val = self.bus.getValueRedPrice(rp, dis, amount)
+        #tmp = '%s %s %s %s %d %d' % (vc,typ,spec,clas,sn,amount)
         #GL.LOG.info(tmp)
-        self.edtResult.setText(tmp)
+        self.edtResult.setText(str(val))
 
     def test(self):
         pass
@@ -63,4 +68,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cmbSn.addItem('4')
         self.cmbSn.selectIndex = 0
         self.sbAmount.setRange(1,65535)
+        self.edtResult.setReadOnly(True)
 
