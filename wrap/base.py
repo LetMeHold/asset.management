@@ -46,9 +46,11 @@ class DB:
                 cur.execute(sql)
                 self.conn.commit()
                 self.count_success += 1
+                return True
         except:
             self.count_failed += 1
             GL.LOG.error('在数据库(%s)执行语句(%s)失败\n%s' % (self.name,sql,traceback.format_exc()))
+            return False
 
     def query(self, sql):
         result = []
@@ -61,5 +63,6 @@ class DB:
         except:
             self.count_failed += 1
             GL.LOG.error('在数据库(%s)执行语句(%s)失败\n%s' % (self.name,sql,traceback.format_exc()))
+            return False
 
 

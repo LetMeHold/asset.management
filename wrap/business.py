@@ -19,7 +19,10 @@ class Business:
     def getRedPrice(self, vc, typ, spec):
         sql = self.tol.queryVcZhSql(vc)
         vcList = self.db.query(sql)
-        GL.LOG.debug('vc对照: %s' % str(vcList))
+        if vcList==False or len(vcList)==0:
+            GL.setErr('查询电压等级对照表时失败！')
+            return False
+        GL.LOG.debug('查询出电压对照: %s' % str(vcList))
         if len(vcList) == 1:
             tmp = vcList[0]['vczh']
         else:
@@ -29,24 +32,35 @@ class Business:
             tmp = tuple(tmp)
         sql = self.tol.queryRedPriceSql(tmp, typ, spec)
         rpList = self.db.query(sql)
-        GL.LOG.debug('红本: %s' % str(rpList))
-        ret = None
+        if rpList==False or len(rpList)==0:
+            GL.setErr('查询红本单价时失败！')
+            return False
+        GL.LOG.debug('查询出红本单价: %s' % str(rpList))
+        ret = False
         if len(rpList) == 1:
             ret = rpList[0]['price']
-        elif len(rpList) > 1:
+        else:
             name = '%s-%s%s %s' % (typ,vc[:vc.find('/')],vcList[0]['unit'],spec)
-            GL.LOG.debug('多个结果,筛选全名为: %s' % name)
             for m in rpList:
                 if m['name'].lower() == name.lower():
                     ret = m['price']
+                    GL.LOG.info('红本价查到多条记录,进一步筛选(%s)成功' % name)
+                    break
+        if ret == False:
+            GL.setErr('红本价查到多条记录,进一步筛选(%s)失败！' % name)
         return ret
 
     def getClassDiscount(self, classify, sn):
         sql = self.tol.queryClassDiscountSql(classify, sn)
         result = self.db.query(sql)
+        if result == False:
+            return False
         retLst = []
         for m in result:
             retLst.append(m['discount'])
+        if len(retLst) == 0:
+            GL.setErr('未获取到下浮数据(%s)！' % sql)
+            return False
         return retLst
 
     def getValueRedPrice(self, rp, discount, amount):

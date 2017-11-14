@@ -15,6 +15,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.relate()
         self.initdata()
         self.bus = None
+        self.connect()
 
     def closeEvent(self, event):
         self.disconnect()
@@ -24,11 +25,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.bus != None:
             del self.bus
         self.bus = Business()
+        self.labConn.setStyleSheet('color:green')
+        self.labConn.setText('已连接')
 
     def disconnect(self):
         if self.bus != None:
             del self.bus
             self.bus = None
+            self.labConn.setStyleSheet('color:red')
+            self.labConn.setText('已断开')
+
 
     def outRedPrice(self):
         if self.bus == None:
@@ -40,14 +46,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         sn = int(self.cmbSn.currentText())
         amount = self.sbAmount.value()
         rp = self.bus.getRedPrice(vc, typ, spec)
+        if rp == False:
+            self.showErr()
+            return
         dis = self.bus.getClassDiscount(clas, sn)
+        if dis == False:
+            self.showErr()
+            return
         val = self.bus.getValueRedPrice(rp, dis, amount)
-        #tmp = '%s %s %s %s %d %d' % (vc,typ,spec,clas,sn,amount)
-        #GL.LOG.info(tmp)
         self.edtResult.setText(str(val))
 
     def test(self):
-        pass
+        self.statusbar.showMessage('这只是一个测试！', 5000)
 
     def relate(self):
         self.btnConn.clicked.connect(self.connect)
@@ -69,4 +79,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cmbSn.selectIndex = 0
         self.sbAmount.setRange(1,65535)
         self.edtResult.setReadOnly(True)
+        self.labConn.setStyleSheet('color:red')
+        self.labConn.setText('已断开')
+
+    def showErr(self):
+        self.statusbar.showMessage(GL.ERR, 5000)
 
