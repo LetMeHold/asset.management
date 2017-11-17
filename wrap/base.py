@@ -19,6 +19,9 @@ class Tools:
     def queryClassDiscountSql(self, classify, sn):
         return 'select discount from classify where class="%s" and sn<=%d' % (classify,sn)
 
+    def queryStuffSql(self, vc, sn, typ, spec):
+        return 'select * from stuff where vc="%s" and sn=%d and type="%s" and spec="%s"' % (vc,sn,typ,spec)
+
 class DB:
 
     def __init__(self, host='localhost', port=3306, db=None, user='root', pwd='root'):
@@ -28,6 +31,9 @@ class DB:
         GL.LOG.info('数据库连接(%s)已建立' % self.name)
         self.count_success = 0
         self.count_failed = 0
+        ret = self.query('select count(id) from stuffid')
+        GL.maxStuffid = ret[0]['count(id)']
+        self.resetCount()
 
     def __del__(self):
         GL.LOG.info('数据库连接(%s)已断开' % self.name)

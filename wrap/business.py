@@ -69,7 +69,33 @@ class Business:
             ret *= n
         ret *= amount
         return ret
-        
+
+    def getStuff(self, vc, sn, typ, spec, amount):
+        sql = self.tol.queryStuffSql(vc, sn, typ, spec)
+        result = self.db.query(sql)
+        if result == False:
+            return False
+        if len(result) != 1:
+            GL.LOG.error('表stuff中查出0条或超过1条记录:%s' % str(result))
+            return False
+        result = result[0]
+        stuffLst = []
+        for i in range(GL.minStuffid,GL.maxStuffid+1):
+            index = 'sid%d' % i
+            stuffLst.append(result[index]*amount)
+        return stuffLst
+
+    def record(self, orderno, orderdate, ordertype, orderspec, vc, typ, spec, classify, sn, amount, outPrice, stuffLst):
+        tmp = '(orderno,orderdate,ordertype,orderspec,type,spec,vc,class,sn,amount,outprice'
+        for k in range(GL.minStuffid,GL.maxStuffid+1):
+            tmp = '%s,sid%d' % (tmp,k)
+        tmp += ')'
+        orderdate = '2017-11-17'
+        lst = [orderno,orderdate,ordertype,orderspec,typ,spec,vc,classify,sn,amount,outPrice/1000]
+        for sl in stuffLst:
+            lst.append(sl/1000)
+        sql = 'insert into record %s values %s' % (tmp,str(tuple(lst)))
+        self.db.exec(sql)
 
     def loadClassifyExcel(self):
         wb = load_workbook(filename='../../db/zjh/分类下浮标准对照表.xlsx')
