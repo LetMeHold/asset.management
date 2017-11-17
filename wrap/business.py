@@ -85,7 +85,6 @@ class Business:
                     self.db.exec(sql)
             GL.LOG.info('导入分类下浮标准对照表(%s)成功与失败次数: %s' % (ws.title,str(self.db.getCount())))
 
-
     def loadVcMapExcel(self):
         wb = load_workbook(filename='../../db/zjh/电压等级对照表.xlsx')
         for ws in wb:
@@ -120,5 +119,27 @@ class Business:
                     self.db.exec(sql)
             GL.LOG.info('导入红本价(%s)成功与失败次数: %s' % (ws.title,str(self.db.getCount())))
 
+    def loadStuffExcel(self):
+        wb = load_workbook(filename='../../db/zjh/用料汇总.xlsx')
+        for ws in wb:
+            self.db.resetCount()
+            for row in ws.rows:
+                tl = []
+                if len(row)>=28 and isinstance(row[0].value,int):
+                    sn = row[0].value
+                    clas = row[1].value
+                    spec = row[2].value
+                    vc = row[3].value
+                    tl.extend([sn,clas,spec,vc])
+                    for i in range(4,28):
+                        m = row[i].value
+                        tl.append(m)
+                    tmp = '(sn,type,spec,vc'
+                    for k in range(1,25):
+                        tmp = '%s,sid%d' % (tmp,k)
+                    tmp += ')'
+                    sql = 'insert into stuff %s values %s' % (tmp,str(tuple(tl)))
+                    self.db.exec(sql)
+            GL.LOG.info('导入分类下浮标准对照表(%s)成功与失败次数: %s' % (ws.title,str(self.db.getCount())))
 
 
