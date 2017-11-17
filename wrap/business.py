@@ -59,7 +59,7 @@ class Business:
         for m in result:
             retLst.append(m['discount'])
         if len(retLst) == 0:
-            GL.setErr('未获取到下浮数据(%s)！' % sql)
+            GL.setErr('未获取分类(%s%d)到下浮数据！' % (classify,sn))
             return False
         return retLst
 
@@ -76,7 +76,7 @@ class Business:
         if result == False:
             return False
         if len(result) != 1:
-            GL.LOG.error('表stuff中查出0条或超过1条记录:%s' % str(result))
+            GL.setErr('表stuff中查出0条或超过1条记录:%s' % result)
             return False
         result = result[0]
         stuffLst = []
@@ -90,12 +90,17 @@ class Business:
         for k in range(GL.minStuffid,GL.maxStuffid+1):
             tmp = '%s,sid%d' % (tmp,k)
         tmp += ')'
-        orderdate = '2017-11-17'
         lst = [orderno,orderdate,ordertype,orderspec,typ,spec,vc,classify,sn,amount,outPrice/1000]
         for sl in stuffLst:
             lst.append(sl/1000)
         sql = 'insert into record %s values %s' % (tmp,str(tuple(lst)))
         self.db.exec(sql)
+
+    def getStuffNameById(self, index):
+        result = self.db.query('select name from stuffid where id = %d' % index)
+        if result == False:
+            return False
+        return result[0]['name']
 
     def loadClassifyExcel(self):
         wb = load_workbook(filename='../../db/zjh/分类下浮标准对照表.xlsx')
