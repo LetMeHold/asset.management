@@ -22,6 +22,7 @@ class Tools:
     def queryStuffSql(self, vc, sn, typ, spec):
         return 'select * from stuff where vc="%s" and sn=%d and type="%s" and spec="%s"' % (vc,sn,typ,spec)
 
+
 class DB:
 
     def __init__(self, host='localhost', port=3306, db=None, user='root', pwd='root'):

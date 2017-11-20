@@ -88,13 +88,30 @@ class Business:
     def record(self, orderno, orderdate, ordertype, orderspec, vc, typ, spec, classify, sn, amount, outPrice, stuffLst):
         tmp = '(orderno,orderdate,ordertype,orderspec,type,spec,vc,class,sn,amount,outprice'
         for k in range(GL.minStuffid,GL.maxStuffid+1):
-            tmp = '%s,sid%d' % (tmp,k)
+            tmp = '%s,sid%02d' % (tmp,k)
         tmp += ')'
         lst = [orderno,orderdate,ordertype,orderspec,typ,spec,vc,classify,sn,amount,outPrice/1000]
         for sl in stuffLst:
             lst.append(sl/1000)
         sql = 'insert into record %s values %s' % (tmp,str(tuple(lst)))
         self.db.exec(sql)
+
+    def getRecord(self):
+        sql = 'select * from record'
+        result = self.db.query(sql)
+        if result == False:
+            return False
+        return result
+
+    def getRecordColumn(self):
+        sql = 'select * from recordmap where id=1'
+        result = self.db.query(sql)
+        if result == False:
+            return False
+        if len(result) != 1:
+            GL.setErr('表recordmap中查出0条或超过1条记录:%s' % result)
+            return False
+        return result[0]
 
     def getStuffNameById(self, index):
         result = self.db.query('select name from stuffid where id = %d' % index)

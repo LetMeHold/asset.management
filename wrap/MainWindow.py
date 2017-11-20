@@ -3,7 +3,7 @@
 from gl import *
 from ui import *
 from wrap.business import Business
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow,QTableWidgetItem
 from PyQt5.QtCore import QDate
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -83,6 +83,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def clearInfo(self):
         self.edtInfo.clear()
 
+    def recordColumn(self):
+        need = ['orderno','orderdate','ordertype','orderspec','vc','amount','outprice']
+        tmp = []
+        for dct in self.record:
+            for k,v in dct.items():
+                if k.find('sid')!=-1 and v>0.0:
+                    if k not in tmp:
+                        tmp.append(k)
+        need.extend(sorted(tmp))
+        return need
+
+    def queryRecord(self):
+        if self.bus == None:
+            return
+        self.record = self.bus.getRecord()
+        self.recordmap = self.bus.getRecordColumn()
+        self.recordcol = self.recordColumn()
+        self.recordhead = []
+        for l in self.recordcol:
+            self.recordhead.append(self.recordmap[l])
+        GL.LOG.info(self.recordhead)
+        self.fillRecordTable()
+        #item = QTableWidgetItem('测试')
+        #self.twData.setItem(0,0,item)
+
+    def fillRecordTable(self):
+        self.twData.clear()
+        self.twData.setColumnCount(len(self.recordhead))
+        self.twData.setRowCount(len(self.record))
+        self.twData.setHorizontalHeaderLabels(self.recordhead)
+        self.twData.setVisible(False)
+        for r in range(0,len(self.record)):
+            for c in range(0,self.twData.columnCount()):
+                txt = str(self.record[r][self.recordcol[c]])
+                it = QTableWidgetItem(txt)
+                self.twData.setItem(r,c,it)
+        self.twData.setVisible(True)
+        return
+
     def relate(self):
         self.btnConn.clicked.connect(self.connect)
         self.btnDisconn.clicked.connect(self.disconnect)
@@ -91,6 +130,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btnClear.clicked.connect(self.clearInfo)
         self.edtOrderTyp.textChanged.connect(self.typChanged)
         self.edtOrderSpec.textChanged.connect(self.specChanged)
+        self.btnQuery.clicked.connect(self.queryRecord)
 
     def initdata(self):
         self.edtOrder.setText('00000000')
@@ -112,6 +152,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.labConn.setText('已断开')
         self.edtInfo.setReadOnly(True)
         self.edtInfo.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)    #不自动换行
+        self.twData.horizontalHeader().setStyleSheet("QHeaderView::section{background:skyblue;}")
+        self.twData.verticalHeader().setStyleSheet("QHeaderView::section{background:skyblue;}")
 
     def showErr(self):
         self.statusbar.showMessage(GL.ERR, 5000)
