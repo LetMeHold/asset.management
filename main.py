@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-#pyuic5.bat -o ui/ui_main.py ui/main.ui
+# pyuic5.bat -o ui/ui_main.py ui/main.ui
+# pyinstaller -F -w main.py
 
 from gl import *
 from ui import *

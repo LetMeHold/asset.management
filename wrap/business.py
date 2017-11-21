@@ -96,8 +96,9 @@ class Business:
         sql = 'insert into record %s values %s' % (tmp,str(tuple(lst)))
         self.db.exec(sql)
 
-    def getRecord(self):
-        sql = 'select * from record'
+    def getRecord(self, startdate, enddate, orderno, typ, spec):
+        sql = self.tol.queryRecordSql(startdate, enddate, orderno, typ, spec)
+        GL.LOG.info(sql)
         result = self.db.query(sql)
         if result == False:
             return False

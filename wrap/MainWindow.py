@@ -5,12 +5,14 @@ from ui import *
 from wrap.business import Business
 from PyQt5.QtWidgets import QMainWindow,QTableWidgetItem
 from PyQt5.QtCore import QDate
+from PyQt5.QtGui import QIcon
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
+        self.setWindowIcon(QIcon('./i.jpg'))
         GL.LOG = getLogger('AssetLoger', 'logs', 'console.log')
         GL.LOG.info('asset.management start')
         self.relate()
@@ -59,6 +61,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
         val = self.bus.getValueRedPrice(rp, dis, amount)
         stuffLst = self.bus.getStuff(vc, sn, typ, spec, amount)
+        if stuffLst == False:
+            self.showErr()
+            return
         self.bus.record(orderno,orderdate,ordertyp,orderspec,vc,typ,spec,clas,sn,amount,val,stuffLst)
         tmp = {}
         i = 1
@@ -70,9 +75,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.edtInfo.append('%s %s %s %s\n%s %s %s %s%d %d\n产值:%f 用料:%s\n已记录\n' \
                 % (orderno,orderdate,ordertyp,orderspec,typ,spec,vc,clas,sn,amount,rp,str(tmp)))
-
-    def test(self):
-        self.statusbar.showMessage('这只是一个测试！', 5000)
 
     def typChanged(self, data):
         self.edtTyp.setText(data)
@@ -92,21 +94,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if k not in tmp:
                         tmp.append(k)
         need.extend(sorted(tmp))
+        self.countindex = need.index('outprice')
         return need
 
     def queryRecord(self):
         if self.bus == None:
             return
-        self.record = self.bus.getRecord()
+        startdate = self.edtStartDate.date().toString('yyyy-MM-dd')
+        enddate = self.edtEndDate.date().toString('yyyy-MM-dd')
+        orderno = self.edtQryOrder.text()
+        typ = self.edtQryTyp.text()
+        spec = self.edtQrySpec.text()
+        self.record = self.bus.getRecord(startdate, enddate, orderno, typ, spec)
         self.recordmap = self.bus.getRecordColumn()
         self.recordcol = self.recordColumn()
-        self.recordhead = []
+        self.recordhead = []    #表头
         for l in self.recordcol:
             self.recordhead.append(self.recordmap[l])
-        GL.LOG.info(self.recordhead)
         self.fillRecordTable()
-        #item = QTableWidgetItem('测试')
-        #self.twData.setItem(0,0,item)
 
     def fillRecordTable(self):
         self.twData.clear()
@@ -114,18 +119,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.twData.setRowCount(len(self.record))
         self.twData.setHorizontalHeaderLabels(self.recordhead)
         self.twData.setVisible(False)
-        for r in range(0,len(self.record)):
+        self.filldata = []
+        for r in range(0,self.twData.rowCount()):
+            tmp = []
             for c in range(0,self.twData.columnCount()):
-                txt = str(self.record[r][self.recordcol[c]])
-                it = QTableWidgetItem(txt)
+                t = self.record[r][self.recordcol[c]]
+                tmp.append(t)
+                it = QTableWidgetItem(str(t))
                 self.twData.setItem(r,c,it)
+            self.filldata.append(tmp)
+        self.twData.setRowCount(self.twData.rowCount()+1)
+        countrow = self.twData.rowCount()-1
+        it = QTableWidgetItem('合计')
+        self.twData.setItem(countrow,0,it)
+        for c in range(self.countindex,self.twData.columnCount()):
+            v = 0.0
+            for l in self.filldata:
+                v += l[c]
+            it = QTableWidgetItem('%.3f' % v)
+            self.twData.setItem(countrow,c,it)
         self.twData.setVisible(True)
         return
 
     def relate(self):
         self.btnConn.clicked.connect(self.connect)
         self.btnDisconn.clicked.connect(self.disconnect)
-        self.btnTest.clicked.connect(self.test)
         self.btnCount.clicked.connect(self.outRedPrice)
         self.btnClear.clicked.connect(self.clearInfo)
         self.edtOrderTyp.textChanged.connect(self.typChanged)
@@ -133,12 +151,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btnQuery.clicked.connect(self.queryRecord)
 
     def initdata(self):
-        self.edtOrder.setText('00000000')
+        #self.edtOrder.setText('00000000')
         now = QDate.currentDate()
         self.edtDate.setDate(now)
-        self.edtOrderTyp.setText('VV')
-        self.edtOrderSpec.setText('1*1.5')
-        self.edtVc.setText('0.6/1')
+        self.edtStartDate.setDate(now)
+        self.edtEndDate.setDate(now)
+        #self.edtOrderTyp.setText('VV')
+        #self.edtOrderSpec.setText('1*1.5')
+        #self.edtVc.setText('0.6/1')
         self.cmbClass.addItem('铜')
         self.cmbClass.addItem('铝')
         self.cmbClass.selectIndex = 0

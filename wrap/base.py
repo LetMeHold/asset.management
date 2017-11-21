@@ -22,6 +22,16 @@ class Tools:
     def queryStuffSql(self, vc, sn, typ, spec):
         return 'select * from stuff where vc="%s" and sn=%d and type="%s" and spec="%s"' % (vc,sn,typ,spec)
 
+    def queryRecordSql(self, startdate, enddate, orderno, typ, spec):
+        sql = 'select * from record where orderdate between "%s" and "%s"' % (startdate,enddate)
+        if orderno != '':
+            sql += ' and orderno like "%%%s%%"' % orderno
+        if typ != '':
+            sql += ' and ordertype="%s"' % typ
+        if spec != '':
+            sql += ' and orderspec="%s"' % spec
+        return sql
+
 
 class DB:
 
