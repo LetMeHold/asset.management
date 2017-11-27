@@ -55,26 +55,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if rp == False:
             self.showErr()
             return
+        GL.LOG.info('查出红本单价: %.3f' % rp)
         dis = self.bus.getClassDiscount(clas, sn)
         if dis == False:
             self.showErr()
             return
+        GL.LOG.info('查出下浮标准: %s' % str(dis))
         val = self.bus.getValueRedPrice(rp, dis, amount)
+        GL.LOG.info('下浮后%d数量的红本价: %f' % (amount,val))
         stuffLst = self.bus.getStuff(vc, sn, typ, spec, amount)
         if stuffLst == False:
             self.showErr()
             return
-        self.bus.record(orderno,orderdate,ordertyp,orderspec,vc,typ,spec,clas,sn,amount,val,stuffLst)
-        tmp = {}
+        tmp = {}    #大于0的用料,只是用来显示
         i = 1
         for f in stuffLst:
             if f > 0.0:
                 name = self.bus.getStuffNameById(i)
                 tmp[name] = f
             i += 1
-
-        self.edtInfo.append('%s %s %s %s\n%s %s %s %s%d %d\n产值:%f 用料:%s\n已记录\n' \
-                % (orderno,orderdate,ordertyp,orderspec,typ,spec,vc,clas,sn,amount,rp,str(tmp)))
+        GL.LOG.info('查出用料: %s' % str(tmp))
+        self.bus.record(orderno,orderdate,ordertyp,orderspec,vc,typ,spec,clas,sn,amount,val,stuffLst)
+        self.edtInfo.append('%s %s %s %s\n%s %s %s %s%d %d %s\n红本单价:%.3f 产值:%.3f 用料:%s\n已记录\n' \
+                % (orderno,orderdate,ordertyp,orderspec,typ,spec,vc,clas,sn,amount,str(dis),rp,val,str(tmp)))
 
     def typChanged(self, data):
         self.edtTyp.setText(data)
@@ -151,14 +154,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btnQuery.clicked.connect(self.queryRecord)
 
     def initdata(self):
-        #self.edtOrder.setText('00000000')
+        self.edtOrder.setText('00000000')
         now = QDate.currentDate()
         self.edtDate.setDate(now)
         self.edtStartDate.setDate(now)
         self.edtEndDate.setDate(now)
-        #self.edtOrderTyp.setText('VV')
-        #self.edtOrderSpec.setText('1*1.5')
-        #self.edtVc.setText('0.6/1')
+        self.edtOrderTyp.setText('VV')
+        self.edtOrderSpec.setText('1*1.5')
+        self.edtVc.setText('0.6/1')
         self.cmbClass.addItem('铜')
         self.cmbClass.addItem('铝')
         self.cmbClass.selectIndex = 0

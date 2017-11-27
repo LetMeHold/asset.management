@@ -22,7 +22,7 @@ class Business:
         if vcList==False or len(vcList)==0:
             GL.setErr('查询电压等级对照表时失败！')
             return False
-        GL.LOG.debug('查询出电压对照: %s' % str(vcList))
+        #GL.LOG.debug('查询出电压对照: %s' % str(vcList))
         if len(vcList) == 1:
             tmp = vcList[0]['vczh']
         else:
@@ -35,7 +35,7 @@ class Business:
         if rpList==False or len(rpList)==0:
             GL.setErr('查询红本单价时失败！')
             return False
-        GL.LOG.debug('查询出红本单价: %s' % str(rpList))
+        #GL.LOG.debug('查询出红本单价: %s' % str(rpList))
         ret = False
         if len(rpList) == 1:
             ret = rpList[0]['price']
@@ -48,7 +48,7 @@ class Business:
                     break
         if ret == False:
             GL.setErr('红本价查到多条记录,进一步筛选(%s)失败！' % name)
-        return ret
+        return ret / 1000
 
     def getClassDiscount(self, classify, sn):
         sql = self.tol.queryClassDiscountSql(classify, sn)
@@ -82,7 +82,7 @@ class Business:
         stuffLst = []
         for i in range(GL.minStuffid,GL.maxStuffid+1):
             index = 'sid%d' % i
-            stuffLst.append(result[index]*amount)
+            stuffLst.append(result[index]*amount/1000)
         return stuffLst
 
     def record(self, orderno, orderdate, ordertype, orderspec, vc, typ, spec, classify, sn, amount, outPrice, stuffLst):
@@ -90,9 +90,9 @@ class Business:
         for k in range(GL.minStuffid,GL.maxStuffid+1):
             tmp = '%s,sid%02d' % (tmp,k)
         tmp += ')'
-        lst = [orderno,orderdate,ordertype,orderspec,typ,spec,vc,classify,sn,amount,outPrice/1000]
+        lst = [orderno,orderdate,ordertype,orderspec,typ,spec,vc,classify,sn,amount,outPrice]
         for sl in stuffLst:
-            lst.append(sl/1000)
+            lst.append(sl)
         sql = 'insert into record %s values %s' % (tmp,str(tuple(lst)))
         self.db.exec(sql)
 
