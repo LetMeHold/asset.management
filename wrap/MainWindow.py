@@ -3,20 +3,20 @@
 from gl import *
 from ui import *
 from wrap.business import Business
-from PyQt5.QtWidgets import QMainWindow,QTableWidgetItem
-from PyQt5.QtCore import QDate
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow,QTableWidgetItem,QMenu,QAction,QMessageBox
+from PyQt5.QtCore import QDate,Qt
+from PyQt5.QtGui import QIcon,QCursor
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
-        self.setWindowIcon(QIcon('./i.jpg'))
         GL.LOG = getLogger('AssetLoger', 'logs', 'console.log')
         GL.LOG.info('asset.management start')
         self.relate()
         self.initdata()
+        self.inittable()
         self.bus = None
         self.connect()
 
@@ -89,7 +89,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.edtInfo.clear()
 
     def recordColumn(self):
-        need = ['orderno','orderdate','ordertype','orderspec','vc','amount','outprice']
+        need = ['recordid','orderno','orderdate','ordertype','orderspec','vc','amount','outprice']
         tmp = []
         for dct in self.record:
             for k,v in dct.items():
@@ -126,7 +126,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for r in range(0,self.twData.rowCount()):
             tmp = []
             for c in range(0,self.twData.columnCount()):
-                t = self.record[r][self.recordcol[c]]
+                k = self.recordcol[c]
+                if k == 'recordid':
+                    k = 'id'
+                t = self.record[r][k]
                 tmp.append(t)
                 it = QTableWidgetItem(str(t))
                 self.twData.setItem(r,c,it)
@@ -175,8 +178,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.labConn.setText('已断开')
         self.edtInfo.setReadOnly(True)
         self.edtInfo.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)    #不自动换行
+
+    def inittable(self):
+        self.twData.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.twData.customContextMenuRequested.connect(self.tablePopMenu)
         self.twData.horizontalHeader().setStyleSheet("QHeaderView::section{background:skyblue;}")
         self.twData.verticalHeader().setStyleSheet("QHeaderView::section{background:skyblue;}")
+        self.actdel = QAction(self)
+        self.actdel.setText('删除')
+        self.popmenu = QMenu(self)
+        self.popmenu.addAction(self.actdel)
+        self.actdel.triggered.connect(self.actionDel)
+
+    def actionDel(self):
+        lst = self.twData.selectedItems()
+        idlst = []
+        for it in lst:
+            if it.column()==0 and it.text().isdigit():
+                idlst.append(int(it.text()))
+        btn = QMessageBox.question(self, '询问', '确认删除以下id的记录吗？\n%s' % str(idlst))
+        if btn == QMessageBox.Yes:
+            for recordid in idlst:
+                self.bus.delRecord(recordid)
+            self.queryRecord()
+
+    def tablePopMenu(self, pos):
+        self.popmenu.popup(QCursor.pos())
 
     def showErr(self):
         self.statusbar.showMessage(GL.ERR, 5000)

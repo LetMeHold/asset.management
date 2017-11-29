@@ -98,11 +98,15 @@ class Business:
 
     def getRecord(self, startdate, enddate, orderno, typ, spec):
         sql = self.tol.queryRecordSql(startdate, enddate, orderno, typ, spec)
-        GL.LOG.info(sql)
         result = self.db.query(sql)
         if result == False:
             return False
         return result
+
+    def delRecord(self, recordid):
+        sql = 'delete from record where id=%d' % recordid
+        GL.LOG.info('执行删除记录操作: %s' % sql)
+        self.db.exec(sql)
 
     def getRecordColumn(self):
         sql = 'select * from recordmap where id=1'

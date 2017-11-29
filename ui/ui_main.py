@@ -300,8 +300,6 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        self.actionManagement = QtWidgets.QAction(MainWindow)
-        self.actionManagement.setObjectName("actionManagement")
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
@@ -336,5 +334,4 @@ class Ui_MainWindow(object):
         self.btnQuery.setText(_translate("MainWindow", "查询"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabData), _translate("MainWindow", "数据查询"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabCfg), _translate("MainWindow", "系统设置"))
-        self.actionManagement.setText(_translate("MainWindow", "management"))
 

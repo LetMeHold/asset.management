@@ -595,11 +595,6 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionManagement">
-   <property name="text">
-    <string>management</string>
-   </property>
-  </action>
  </widget>
  <tabstops>
   <tabstop>btnConn</tabstop>
