@@ -196,6 +196,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for it in lst:
             if it.column()==0 and it.text().isdigit():
                 idlst.append(int(it.text()))
+        if len(idlst) == 0:
+            return
         btn = QMessageBox.question(self, '询问', '确认删除以下id的记录吗？\n%s' % str(idlst))
         if btn == QMessageBox.Yes:
             for recordid in idlst:
