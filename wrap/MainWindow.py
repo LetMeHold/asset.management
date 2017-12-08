@@ -19,6 +19,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.inittable()
         self.bus = None
         self.connect()
+        self.edtOrder.setFocus()
+        self.btnCount.setDefault(True)
 
     def closeEvent(self, event):
         self.disconnect()
@@ -78,6 +80,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.bus.record(orderno,orderdate,ordertyp,orderspec,vc,typ,spec,clas,sn,amount,val,stuffLst)
         self.edtInfo.append('%s %s %s %s\n%s %s %s %s%d %d %s\n红本单价:%.3f 产值:%.3f 用料:%s\n已记录\n' \
                 % (orderno,orderdate,ordertyp,orderspec,typ,spec,vc,clas,sn,amount,str(dis),rp,val,str(tmp)))
+        self.edtOrder.setFocus()
 
     def typChanged(self, data):
         self.edtTyp.setText(data)
@@ -176,14 +179,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btnClearImport.clicked.connect(self.clearInfoImport)
 
     def initdata(self):
-        self.edtOrder.setText('00000000')
+        #self.edtOrder.setText('00000000')
         now = QDate.currentDate()
         self.edtDate.setDate(now)
         self.edtStartDate.setDate(now)
         self.edtEndDate.setDate(now)
-        self.edtOrderTyp.setText('VV')
-        self.edtOrderSpec.setText('1*1.5')
-        self.edtVc.setText('0.6/1')
+        #self.edtOrderTyp.setText('VV')
+        #self.edtOrderSpec.setText('1*1.5')
+        #self.edtVc.setText('0.6/1')
         self.cmbClass.addItem('铜')
         self.cmbClass.addItem('铝')
         self.cmbClass.selectIndex = 0

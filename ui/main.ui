@@ -710,9 +710,36 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <tabstops>
+  <tabstop>edtOrder</tabstop>
+  <tabstop>edtDate</tabstop>
+  <tabstop>edtOrderTyp</tabstop>
+  <tabstop>edtOrderSpec</tabstop>
+  <tabstop>edtTyp</tabstop>
+  <tabstop>edtSpec</tabstop>
+  <tabstop>edtVc</tabstop>
+  <tabstop>cmbClass</tabstop>
+  <tabstop>cmbSn</tabstop>
+  <tabstop>sbAmount</tabstop>
+  <tabstop>btnCount</tabstop>
+  <tabstop>edtInfo</tabstop>
+  <tabstop>btnClear</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>edtQryOrder</tabstop>
+  <tabstop>edtQryTyp</tabstop>
+  <tabstop>edtQrySpec</tabstop>
+  <tabstop>edtStartDate</tabstop>
+  <tabstop>edtEndDate</tabstop>
+  <tabstop>btnQuery</tabstop>
+  <tabstop>twData</tabstop>
+  <tabstop>edtFn</tabstop>
+  <tabstop>btnBrowse</tabstop>
+  <tabstop>rbRedPrice</tabstop>
+  <tabstop>rbStuff</tabstop>
+  <tabstop>btnImportFn</tabstop>
+  <tabstop>edtInfoImport</tabstop>
+  <tabstop>btnClearImport</tabstop>
   <tabstop>btnConn</tabstop>
   <tabstop>btnDisconn</tabstop>
-  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections/>
