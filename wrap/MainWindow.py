@@ -3,7 +3,7 @@
 from gl import *
 from ui import *
 from wrap.business import Business
-from PyQt5.QtWidgets import QMainWindow,QTableWidgetItem,QMenu,QAction,QMessageBox
+from PyQt5.QtWidgets import QMainWindow,QTableWidgetItem,QMenu,QAction,QMessageBox,QFileDialog
 from PyQt5.QtCore import QDate,Qt
 from PyQt5.QtGui import QIcon,QCursor
 
@@ -147,6 +147,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.twData.setVisible(True)
         return
 
+    def browseFile(self):
+        fn,ft = QFileDialog.getOpenFileName(self, '选择导入文件', 'c:/', 'Excel Files (*.xlsx)')
+        self.edtFn.setText(fn)
+
+    def clearInfoImport(self):
+        self.edtInfoImport.clear()
+
+    def importFile(self):
+        fn = self.edtFn.text()
+        if self.rbRedPrice.isChecked():
+            self.bus.loadRedPriceExcel(fn, self.edtInfoImport)
+        elif self.rbStuff.isChecked():
+            self.bus.loadStuffExcel(fn, self.edtInfoImport)
+        else:
+            pass
+
     def relate(self):
         self.btnConn.clicked.connect(self.connect)
         self.btnDisconn.clicked.connect(self.disconnect)
@@ -155,6 +171,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.edtOrderTyp.textChanged.connect(self.typChanged)
         self.edtOrderSpec.textChanged.connect(self.specChanged)
         self.btnQuery.clicked.connect(self.queryRecord)
+        self.btnBrowse.clicked.connect(self.browseFile)
+        self.btnImportFn.clicked.connect(self.importFile)
+        self.btnClearImport.clicked.connect(self.clearInfoImport)
 
     def initdata(self):
         self.edtOrder.setText('00000000')
@@ -178,6 +197,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.labConn.setText('已断开')
         self.edtInfo.setReadOnly(True)
         self.edtInfo.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)    #不自动换行
+        self.edtInfoImport.setReadOnly(True)
+        self.edtInfoImport.setLineWrapMode(QtWidgets.QTextEdit.NoWrap)    #不自动换行
+        self.rbRedPrice.setChecked(True)
 
     def inittable(self):
         self.twData.setContextMenuPolicy(Qt.CustomContextMenu)

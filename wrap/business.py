@@ -152,8 +152,10 @@ class Business:
                     self.db.exec(sql)
             GL.LOG.info('导入电压等级对照表(%s)成功与失败次数: %s' % (ws.title,str(self.db.getCount())))
 
-    def loadRedPriceExcel(self):
-        wb = load_workbook(filename='../../db/zjh/电子红本2017.3.14.xlsx')
+    def loadRedPriceExcel(self, fn, edtInfo):
+        #wb = load_workbook(filename='../../db/zjh/电子红本2017.3.14.xlsx')
+        wb = load_workbook(filename=fn)
+        edtInfo.clear()
         for ws in wb:
             self.db.resetCount()
             for row in ws.rows:
@@ -170,10 +172,13 @@ class Business:
                     values = (vc,typ,name,spec,unit,price)
                     sql = 'insert into redprice (vc,type,name,spec,unit,price) values %s' % str(values)
                     self.db.exec(sql)
-            GL.LOG.info('导入红本价(%s)成功与失败次数: %s' % (ws.title,str(self.db.getCount())))
+            info = '从 "%s,%s" 导入数据 (成功,失败):%s' % (fn,ws.title,str(self.db.getCount()))
+            edtInfo.append(info)
+            GL.LOG.info(info)
 
-    def loadStuffExcel(self):
-        wb = load_workbook(filename='../../db/zjh/用料汇总.xlsx')
+    def loadStuffExcel(self, fn, edtInfo):
+        #wb = load_workbook(filename='../../db/zjh/用料汇总.xlsx')
+        wb = load_workbook(filename=fn)
         for ws in wb:
             self.db.resetCount()
             for row in ws.rows:
@@ -193,6 +198,8 @@ class Business:
                     tmp += ')'
                     sql = 'insert into stuff %s values %s' % (tmp,str(tuple(tl)))
                     self.db.exec(sql)
-            GL.LOG.info('导入分类下浮标准对照表(%s)成功与失败次数: %s' % (ws.title,str(self.db.getCount())))
+            info = '从 "%s,%s" 导入数据 (成功,失败):%s' % (fn,ws.title,str(self.db.getCount()))
+            edtInfo.append(info)
+            GL.LOG.info(info)
 
 
