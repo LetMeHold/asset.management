@@ -111,7 +111,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         orderno = self.edtQryOrder.text()
         typ = self.edtQryTyp.text()
         spec = self.edtQrySpec.text()
-        self.record = self.bus.getRecord(startdate, enddate, orderno, typ, spec)
+        vc = self.edtQryVc.text()
+        self.record = self.bus.getRecord(startdate, enddate, orderno, typ, spec, vc)
         self.recordmap = self.bus.getRecordColumn()
         self.recordcol = self.recordColumn()
         self.recordhead = []    #表头
