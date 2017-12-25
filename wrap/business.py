@@ -22,7 +22,6 @@ class Business:
         if vcList==False or len(vcList)==0:
             GL.setErr('查询电压等级对照表时失败！')
             return False
-        #GL.LOG.debug('查询出电压对照: %s' % str(vcList))
         if len(vcList) == 1:
             tmp = vcList[0]['vczh']
         else:
@@ -35,12 +34,18 @@ class Business:
         if rpList==False or len(rpList)==0:
             GL.setErr('查询红本单价时失败！')
             return False
-        #GL.LOG.debug('查询出红本单价: %s' % str(rpList))
         ret = False
         if len(rpList) == 1:
             ret = rpList[0]['price']
         else:
-            name = '%s-%s%s %s' % (typ,vc[:vc.find('/')],vcList[0]['unit'],spec)
+            if vc == '1':
+                name = '%s %s' % (typ,spec)
+            else:
+                index = vc.find('/')
+                if index == -1:
+                    name = '%s-%s%s %s' % (typ,vc,vcList[0]['unit'],spec)
+                else:
+                    name = '%s-%s%s %s' % (typ,vc[:index],vcList[0]['unit'],spec)
             for m in rpList:
                 if m['name'].lower() == name.lower():
                     ret = m['price']

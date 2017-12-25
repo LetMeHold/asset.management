@@ -60,6 +60,7 @@ class DB:
         return (self.count_success,self.count_failed)
 
     def exec(self, sql):
+        GL.LOG.debug(sql)
         try:
             with self.conn.cursor() as cur:
                 cur.execute(sql)
@@ -72,6 +73,7 @@ class DB:
             return False
 
     def query(self, sql):
+        GL.LOG.debug(sql)
         result = []
         try:
             with self.conn.cursor() as cur:

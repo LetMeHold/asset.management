@@ -42,7 +42,10 @@ def loadClassify():
 def loadStuff():
     bus.loadStuffExcel()
 
-test()
+#test()
+vc = '0.6/1'
+print(vc.find('/'))
+print(vc[:vc.find('/')])
 
 del bus
 
