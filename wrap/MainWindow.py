@@ -196,7 +196,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cmbSn.addItem('3')
         self.cmbSn.addItem('4')
         self.cmbSn.selectIndex = 0
-        self.sbAmount.setRange(1,65535)
+        self.sbAmount.setRange(1,65535*1000)
         self.labConn.setStyleSheet('color:red')
         self.labConn.setText('已断开')
         self.edtInfo.setReadOnly(True)
